@@ -1,4 +1,5 @@
-<cfset getService("UIManager").registerSiteModule(href = "index.cfm?event=my.S3ResLib.ehGeneral.dspMain",
+<cfset getService("UIManager").registerSiteModule(name = "S3ResLib",
+												href = "index.cfm?event=my.S3ResLib.ehGeneral.dspMain",
 												alt = "S3 Resource Libraries",
 												imgSrc = "images/Globe_48x48.png",
 												label = "S3 Resource Libraries",
