@@ -65,8 +65,12 @@
 					</cfif>
 				</td>
 				<td align="center">
-					<a href="##" onclick="confirmUninstall('#rs.serverModules[i].uuid#','server','#jsStringFormat(rs.serverModules[i].label)#')"><img src="images/delete.png" align="absmiddle" border="0" alt="Uninstall"></a>
-					<a href="##" onclick="confirmUninstall('#rs.serverModules[i].uuid#','server','#jsStringFormat(rs.serverModules[i].label)#')">Uninstall</a>
+					<cfif structKeyExists(rs.serverModules[i],"core") and rs.serverModules[i].core>
+						<em>core</em>
+					<cfelse>
+						<a href="##" onclick="confirmUninstall('#rs.serverModules[i].uuid#','server','#jsStringFormat(rs.serverModules[i].label)#')"><img src="images/delete.png" align="absmiddle" border="0" alt="Uninstall"></a>
+						<a href="##" onclick="confirmUninstall('#rs.serverModules[i].uuid#','server','#jsStringFormat(rs.serverModules[i].label)#')">Uninstall</a>
+					</cfif>
 				</td>
 			</tr>
 			<cfset index = index + 1>
@@ -88,8 +92,12 @@
 					</cfif>
 				</td>
 				<td align="center">
-					<a href="##" onclick="confirmUninstall('#rs.siteModules[i].uuid#','site','#jsStringFormat(rs.siteModules[i].label)#')"><img src="images/delete.png" align="absmiddle" border="0" alt="Uninstall"></a>
-					<a href="##" onclick="confirmUninstall('#rs.siteModules[i].uuid#','site','#jsStringFormat(rs.siteModules[i].label)#')">Uninstall</a>
+					<cfif structKeyExists(rs.siteModules[i],"core") and rs.siteModules[i].core>
+						<em>core</em>
+					<cfelse>
+						<a href="##" onclick="confirmUninstall('#rs.siteModules[i].uuid#','site','#jsStringFormat(rs.siteModules[i].label)#')"><img src="images/delete.png" align="absmiddle" border="0" alt="Uninstall"></a>
+						<a href="##" onclick="confirmUninstall('#rs.siteModules[i].uuid#','site','#jsStringFormat(rs.siteModules[i].label)#')">Uninstall</a>
+					</cfif>
 				</td>
 			</tr>
 			<cfset index = index + 1>

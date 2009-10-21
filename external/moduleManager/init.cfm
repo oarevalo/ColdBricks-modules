@@ -1,4 +1,5 @@
-<cfset getService("UIManager").registerServerModule(href = "index.cfm?event=my.moduleManager.ehGeneral.dspMain",
+<cfset getService("UIManager").registerServerModule(name = "moduleManager",
+												href = "index.cfm?event=my.moduleManager.ehGeneral.dspMain",
 												alt = "Module Manager",
 												label = "Module Manager",
 												accessMapKey = "moduleManager",
