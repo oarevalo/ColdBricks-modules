@@ -9,7 +9,7 @@
 <script type="text/javascript">
 function confirmDeleteResLibPath(index) {
 	if(confirm("Delete resource library path?")) {
-		document.location = "index.cfm?event=my.S3ResLib.ehGeneral.doDeleteResLibPath&index=" + index;
+		document.location = "index.cfm?event=S3ResLib.ehGeneral.doDeleteResLibPath&index=" + index;
 	}
 }
 </script>
@@ -23,7 +23,7 @@ function confirmDeleteResLibPath(index) {
 					The following resource libraries use S3 as their backend storage. Use the link below the table to add a new S3 Resource Library.
 					<br />
 					<br />
-					To modify your Amazon S3 access credentials, <a href="index.cfm?event=my.S3ResLib.ehGeneral.dspSetup">Click Here</a>
+					To modify your Amazon S3 access credentials, <a href="index.cfm?event=S3ResLib.ehGeneral.dspSetup">Click Here</a>
 				</div>
 			
 				<table style="width:100%;border:1px solid silver;">
@@ -38,9 +38,9 @@ function confirmDeleteResLibPath(index) {
 							<tr <cfif resLibPathEditIndex eq i>style="font-weight:bold;"</cfif>>
 								<cfset bucketName = replace(path, s3prefix & "://", "")>
 								<td style="width:50px;" align="right"><strong>#i#.</strong></td>
-								<td><a href="index.cfm?event=my.S3ResLib.ehGeneral.dspMain&resLibPathEditIndex=#i#">#bucketName#</a></td>
+								<td><a href="index.cfm?event=S3ResLib.ehGeneral.dspMain&resLibPathEditIndex=#i#">#bucketName#</a></td>
 								<td align="center">
-									<a href="index.cfm?event=my.S3ResLib.ehGeneral.dspMain&resLibPathEditIndex=#i#"><img src="images/page_edit.png" border="0" alt="Edit resource library path" title="Edit resource library path"></a>
+									<a href="index.cfm?event=S3ResLib.ehGeneral.dspMain&resLibPathEditIndex=#i#"><img src="images/page_edit.png" border="0" alt="Edit resource library path" title="Edit resource library path"></a>
 									<a href="##" onclick="confirmDeleteResLibPath(#i#)"><img src="images/page_delete.png" border="0" alt="Delete resource library path" title="Delete resource library path"></a>
 								</td>
 							</tr>
@@ -53,19 +53,19 @@ function confirmDeleteResLibPath(index) {
 						<cfset bucketName = replace(aResLibs[resLibPathEditIndex], s3prefix & "://", "")>
 					</cfif>
 					<form name="frmSaveResLibPath" action="index.cfm" method="post">
-						<input type="hidden" name="event" value="my.S3ResLib.ehGeneral.doSaveResLibPath">
+						<input type="hidden" name="event" value="S3ResLib.ehGeneral.doSaveResLibPath">
 						<input type="hidden" name="index" value="#resLibPathEditIndex#">
 						<p style="margin:10px;margin-top:20px;">
 							<b>Enter the name of the S3 bucket to use as the root for the resource library:</b><br /><br />
 							<input type="text" name="path" value="#bucketName#" style="width:340px;" class="formField">
 							&nbsp;&nbsp;
 							<input type="submit" name="btnSave" value="Apply" style="font-size:11px;">
-							<input type="button" name="btnCancel" value="Cancel" style="font-size:11px;" onclick="document.location='index.cfm?event=my.S3ResLib.ehGeneral.dspMain'">
+							<input type="button" name="btnCancel" value="Cancel" style="font-size:11px;" onclick="document.location='index.cfm?event=S3ResLib.ehGeneral.dspMain'">
 						</p>
 					</form>
 				<cfelse>
 					<br>
-					<a href="index.cfm?event=my.S3ResLib.ehGeneral.dspMain&resLibPathEditIndex=0">Click Here</a> to add a resource library
+					<a href="index.cfm?event=S3ResLib.ehGeneral.dspMain&resLibPathEditIndex=0">Click Here</a> to add a resource library
 				</cfif>
 			</td>
 			<td width="200">

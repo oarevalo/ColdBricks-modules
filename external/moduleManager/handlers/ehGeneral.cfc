@@ -1,15 +1,11 @@
 <cfcomponent extends="ColdBricks.handlers.ehColdBricks">
 	
-	<cfset eventPrefix = "my.">
-	
 	<cffunction name="dspMain" access="public" returntype="void">
 		<cfscript>
 			try {
 				ui = getService("UIManager");
 				
-				setValue("serverModules", ui.getServerModules());
-				setValue("siteModules", ui.getSiteModules());
-				setValue("eh", eventPrefix & "moduleManager");
+				setValue("modules", ui.getModules());
 				setValue("cbPageTitle", "Module Manager");
 				setValue("cbPageIcon", "");
 				setView("vwMain");
@@ -22,36 +18,20 @@
 	</cffunction>
 
 	<cffunction name="doUninstall" access="public" returntype="void">
-		<cfset var type = getValue("type")>
-		<cfset var uuid = getValue("uuid")>
-		<cfset var path = "">
+		<cfset var name = getValue("name")>
 		<cfset var fullpath = "">
 
 		<cftry>
 			<cfset ui = getService("UIManager")>
 			
-			<cfif type eq "server">
-				<cfset aModules = ui.getServerModules()>
-			<cfelseif type eq "site">
-				<cfset aModules = ui.getSiteModules()>
-			<cfelse>
-				<cfthrow message="Invalid module type [#type#]">
-			</cfif>
-
-			<cfloop from="1" to="#arrayLen(aModules)#" index="i">
-				<cfif aModules[i].uuid eq uuid>
-					<cfset path = aModules[i].accessMapKey>
-				</cfif>
-			</cfloop>
-			
-			<cfif path eq "">
-				<cfthrow message="Module not registered">
+			<cfif not ui.hasModule(name)>
+				<cfthrow message="Module '#name#' not found">
 			</cfif>
 			
-			<cfif directoryExists(expandPath("/ColdBricks/modules/#path#"))>
-				<cfset fullpath = "/ColdBricks/modules/#path#">
-			<cfelseif directoryExists(expandPath("/ColdBricksModules/#path#"))>
-				<cfset fullpath = "/ColdBricksModules/#path#">
+			<cfif directoryExists(expandPath("/ColdBricks/modules/#name#"))>
+				<cfset fullpath = "/ColdBricks/modules/#name#">
+			<cfelseif directoryExists(expandPath("/ColdBricksModules/#name#"))>
+				<cfset fullpath = "/ColdBricksModules/#name#">
 			<cfelse>
 				<cfthrow message="Module not found">
 			</cfif>
@@ -59,11 +39,11 @@
 			<cfdirectory action="delete" directory="#expandPath(fullpath)#" recurse="true">
 
 			<cfset setMessage("info","The module has been uninstalled. You must reset ColdBricks now")>
-			<cfset setNextEvent("#eventPrefix#ModuleManager.ehGeneral.dspMain","showReset=true")>
+			<cfset setNextEvent("moduleManager.ehGeneral.dspMain","showReset=true")>
 
 			<cfcatch type="any">
 				<cfset setMessage("error",cfcatch.message)>
-				<cfset setNextEvent("#eventPrefix#ModuleManager.ehGeneral.dspMain")>
+				<cfset setNextEvent("moduleManager.ehGeneral.dspMain")>
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -100,6 +80,9 @@
 			<cfelseif installZip neq "">
 				<!--- this is a ZIP install --->
 				<cffile action="upload" destination="#zippath#" nameconflict="overwrite" filefield="installZip">
+			
+			<cfelse>
+				<cfthrow message="Please provide a URL or archive to install">
 			</cfif>
 
 			<cfif not directoryExists(expandPath(installpath))>
@@ -111,11 +94,11 @@
 			<cffile action="delete" file="#zippath#">
 
 			<cfset setMessage("info","The module has been installed. You must reset ColdBricks now")>
-			<cfset setNextEvent("#eventPrefix#ModuleManager.ehGeneral.dspMain","showReset=true")>
+			<cfset setNextEvent("moduleManager.ehGeneral.dspMain","showReset=true")>
 
 			<cfcatch type="any">
 				<cfset setMessage("error",cfcatch.message)>
-				<cfset setNextEvent("#eventPrefix#ModuleManager.ehGeneral.dspMain")>
+				<cfset setNextEvent("moduleManager.ehGeneral.dspMain")>
 			</cfcatch>
 		</cftry>
 	</cffunction>

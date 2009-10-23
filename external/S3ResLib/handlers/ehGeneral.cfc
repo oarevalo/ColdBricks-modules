@@ -64,16 +64,16 @@
  				reloadSite();
  			
 				setMessage("info","S3 access credentials saved. You can now add your S3-backed resource libraries");
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 				
 			} catch(coldbricks.validation e) {
 				setMessage("warning", e.message);
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 
 			} catch(any e) {
 				setMessage("error", e.message);
 				getService("bugTracker").notifyService(e.message, e);
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 			}
 		</cfscript>
 	
@@ -107,16 +107,16 @@
 				getService("configManager").saveAppHomePortalsConfigBean( oContext, oConfigBean );
 				
 				setMessage("info", "Resource library updated");
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 			
 			} catch(validation e) {
 				setMessage("warning",e.message);
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain","resLibPathEditIndex=#index#");
+				setNextEvent("S3ResLib.ehGeneral.dspMain","resLibPathEditIndex=#index#");
 
 			} catch(any e) {
 				setMessage("error", e.message);
 				getService("bugTracker").notifyService(e.message, e);
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 			}
 		</cfscript>		
 	</cffunction>	
@@ -143,16 +143,16 @@
 				getService("configManager").saveAppHomePortalsConfigBean( oContext, oConfigBean );
 
 				setMessage("info", "Resource library removed");
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 			
 			} catch(validation e) {
 				setMessage("warning",e.message);
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 
 			} catch(any e) {
 				setMessage("error", e.message);
 				getService("bugTracker").notifyService(e.message, e);
-				setNextEvent("my.S3ResLib.ehGeneral.dspMain");
+				setNextEvent("S3ResLib.ehGeneral.dspMain");
 			}
 		</cfscript>	
 	</cffunction>	

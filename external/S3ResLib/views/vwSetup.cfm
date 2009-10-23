@@ -11,7 +11,7 @@
 				</p>
 			</div>
 			<form name="frm" method="post" action="index.cfm">
-				<input type="hidden" name="event" value="my.S3ResLib.ehGeneral.doSetup">
+				<input type="hidden" name="event" value="S3ResLib.ehGeneral.doSetup">
 				<table>
 					<tr>
 						<td><b>S3 Access Key:</b></td>
