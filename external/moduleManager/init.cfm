@@ -1,5 +1,7 @@
-<cfset getService("UIManager").registerServerModule(name = "moduleManager",
-												href = "index.cfm?event=my.moduleManager.ehGeneral.dspMain",
+<cfset getService("UIManager").registerModule(name = "moduleManager",
+												description = "Manage current ColdBricks modules and discover new modules from ColdBricks.com")>
+												
+<cfset getService("UIManager").registerServerFeature(href = "index.cfm?event=my.moduleManager.ehGeneral.dspMain",
 												alt = "Module Manager",
 												label = "Module Manager",
 												accessMapKey = "moduleManager",
