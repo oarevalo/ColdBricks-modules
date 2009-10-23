@@ -1,5 +1,8 @@
 <cfset getService("UIManager").registerModule(name = "siteMonitor",
-												description = "Displays runtime statistics and insight into the current status of a site")>
+												description = "Displays runtime statistics and insight into the current status of a site",
+												version = "1.0",
+												author = "ColdBricks",
+												authorURL = "http://www.coldbricks.com")>
 	
 <cfset getService("UIManager").registerSiteFeature(href = "index.cfm?event=siteMonitor.ehSiteMonitor.dspMain",
 												imgSrc = "images/gnome-monitor_48x48.png",

@@ -1,5 +1,8 @@
 <cfset getService("UIManager").registerModule(name = "siteMap",
-												description = "Allows creation of friendly urls for accounts enabled sites")>
+												description = "Allows creation of friendly urls for accounts enabled sites",
+												version = "1.0",
+												author = "ColdBricks",
+												authorURL = "http://www.coldbricks.com")>
 	
 <cfset getService("UIManager").registerSiteFeature(href = "index.cfm?event=siteMap.ehSiteMap.dspMain",
 												imgSrc = "images/Globe_48x48.png",
