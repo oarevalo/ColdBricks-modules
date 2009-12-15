@@ -109,7 +109,7 @@
 			<cfquery name="qryDir" dbtype="query">
 				SELECT *
 					FROM qryDir
-					WHERE (type like 'Dir'
+					WHERE (upper(type) = 'DIR'
 						OR name like '%.cfm'
 						OR name like '%.htm')
 						and name not like '%.svn'
