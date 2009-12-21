@@ -1,9 +1,9 @@
-<script type="text/javascript" src="/ColdBricksModules/navMenu/site/navMenu.js"></script>
-
-<cfset checkCache()>
-<cfset variables.xmlDoc = getFromCache()>
-
+<cfsilent>
+	<cfset checkCache()>
+	<cfset variables.xmlDoc = getFromCache()>
+</cfsilent>
 <cfoutput>
+	<script type="text/javascript" src="/ColdBricksModules/navMenu/site/navMenu.js"></script>
 	<div class="sidebarmenu">
 		#renderBranch(variables.xmlDoc.xmlRoot,"sidebarmenu1")#
 	</div>
