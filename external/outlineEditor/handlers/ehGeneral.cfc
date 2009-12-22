@@ -1,6 +1,7 @@
 <cfcomponent extends="ColdBricks.handlers.ehColdBricks">
 
-	<cfset variables.MAP_FILE = "config/outlineEditor-config.xml">
+	<cfset variables.RESOURCE_TYPE = "outline">
+	<cfset variables.RESOURCE_TYPE_FOLDER = "Outlines">
 
 	<cffunction name="dspMain" access="public" returntype="void">
 		<cfscript>
@@ -11,8 +12,23 @@
 			var edit = getValue("edit");
 			var itemName = getValue("itemName");
 			var itemURL = getValue("itemURL");
-
+			var hp = getService("sessionContext").getContext().getHomePortals();
+			var nodeAttributes = structNew();
+	
 			try {
+				hasType = hp.getResourceLibraryManager().hasResourceType(variables.RESOURCE_TYPE);
+				if(hasType) {
+					qryResources = hp.getCatalog().getResourcesByType(variables.RESOURCE_TYPE);
+					setValue("qryResources", qryResources );
+				} else {
+					setNextEvent("outlineEditor.ehGeneral.dspSetup");
+				}
+
+				if(qryResources.recordCount eq 0) {
+					setMessage("warning","There are no resources of type '#variables.RESOURCE_TYPE#'. Please create at least one before using the Outline Editor");
+					setNextEvent("resources.ehResources.dspMain","resourceType=#variables.RESOURCE_TYPE#");
+				}
+
 				xmlDoc = loadDoc();
 				
 				xmlBase = xmlDoc.xmlRoot.body;
@@ -32,19 +48,23 @@
 							xmlEditBase = xmlEditBase.xmlChildren[ listGetAt(edit,i) ];
 							itemName = xmlEditBase.xmlAttributes.text;
 							itemURL = xmlEditBase.xmlAttributes.href;
+							nodeAttributes = duplicate(xmlEditBase.xmlAttributes);
 						} else {
 							itemName = "";
 							itemURL = "";
 						}
 					}
 				}	
-					
-				setValue("path", path );
+				
+				if(structKeyExists(session,"outlineEditor_selResID")) 
+					setValue("selectedResourceID", session.outlineEditor_selResID);	
+				setValue("path", path );				
 				setValue("xmlBase", xmlBase );
 				setValue("aPathItems", aPathItems );
 				setValue("aPaths", aPaths );
 				setValue("itemName", itemName );
 				setValue("itemURL", itemURL );
+				setValue("nodeAttributes", nodeAttributes );
 				
 				setValue("cbPageTitle", "Outline Editor");
 				setValue("cbPageIcon", "/ColdBricksModules/outlineEditor/images/view-tree.png");
@@ -53,6 +73,24 @@
 
 			} catch(any e) {
 				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
+				setNextEvent("ehGeneral.dspMain");			
+			}
+		</cfscript>
+	</cffunction>
+	
+	<cffunction name="dspSetup" access="public" returntype="void">
+		<cfscript>
+			try {
+				setValue("resourceType", variables.RESOURCE_TYPE);
+				setValue("cbPageTitle", "Outline Editor - Setup");
+				setValue("cbPageIcon", "/ColdBricksModules/outlineEditor/images/view-tree.png");
+				setValue("cbShowSiteMenu", true);
+				setView("vwSetup");
+			
+			} catch(any e) {
+				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
 				setNextEvent("ehGeneral.dspMain");			
 			}
 		</cfscript>
@@ -63,6 +101,7 @@
 			var path = getValue("path");
 			var itemName = getValue("name");
 			var itemURL = getValue("url");
+			var attributes = getValue("attributes");
 			var str = "xmlDoc.xmlRoot.body";
 			var newpath = "";
 
@@ -86,12 +125,30 @@
 					xmlNew = xmlElemNew(xmlDoc,"outline");
 					xmlNew.xmlAttributes["text"] = xmlFormat(itemName);
 					xmlNew.xmlAttributes["href"] = xmlFormat(itemURL);
+					
+					if(getValue("newAttr_name") neq "") {
+						xmlNew.xmlAttributes[ getValue("newAttr_name") ] = xmlFormat( getValue("newAttr_value") );
+					}
+					
 					arrayAppend(xmlNode.xmlChildren, xmlNew);
 					newpath = path;
 					
 				} else {
 					xmlNode.xmlAttributes.text = xmlFormat(itemName);
 					xmlNode.xmlAttributes.href = xmlFormat(itemURL);
+					for(i=1;i lte listLen(attributes);i++) {
+						attr = listGetAt(attributes,i);
+						if(not listFindNoCase("text,href",attr)) {
+							xmlNode.xmlAttributes[attr] = xmlFormat(getValue(attr));
+
+							if(getValue(attr & "_delete",false) and structKeyExists(xmlNode.xmlAttributes,attr)){
+								structDelete(xmlNode.xmlAttributes,attr);
+							}
+						}
+					}
+					if(getValue("newAttr_name") neq "") {
+						xmlNode.xmlAttributes[ getValue("newAttr_name") ] = xmlFormat( getValue("newAttr_value") );
+					}
 				}
 	
 				saveDoc(xmlDoc);	
@@ -101,6 +158,7 @@
 
 			} catch(any e) {
 				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
 				setNextEvent("outlineEditor.ehGeneral.dspMain");			
 			}		
 		</cfscript>
@@ -132,6 +190,7 @@
 
 			} catch(any e) {
 				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
 				setNextEvent("outlineEditor.ehGeneral.dspMain");			
 			}		
 		</cfscript>	
@@ -159,9 +218,7 @@
 					setNextEvent("outlineEditor.ehGeneral.dspMain&path=#newpath#");
 				}
 				
-				nodeCopy = xmlElemNew(xmlDoc,"item");
-				nodeCopy.xmlAttributes["title"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.title;
-				nodeCopy.xmlAttributes["href"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.href;
+				nodeCopy = duplicate( xmlNode.xmlChildren[listLast(path)] );
 
 				arrayDeleteAt(xmlNode.xmlChildren,listLast(path));
 				arrayInsertAt(xmlNode.xmlChildren,listLast(path)-1,nodeCopy);
@@ -173,6 +230,7 @@
 
 			} catch(any e) {
 				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
 				setNextEvent("outlineEditor.ehGeneral.dspMain");			
 			}		
 		</cfscript>	
@@ -200,9 +258,7 @@
 					setNextEvent("outlineEditor.ehGeneral.dspMain&path=#newpath#");
 				}
 
-				nodeCopy = xmlElemNew(xmlDoc,"item");
-				nodeCopy.xmlAttributes["title"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.title;
-				nodeCopy.xmlAttributes["href"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.href;
+				nodeCopy = duplicate( xmlNode.xmlChildren[listLast(path)] );
 
 				arrayDeleteAt(xmlNode.xmlChildren,listLast(path));
 				arrayInsertAt(xmlNode.xmlChildren,listLast(path)+1,nodeCopy);
@@ -214,8 +270,60 @@
 
 			} catch(any e) {
 				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
 				setNextEvent("outlineEditor.ehGeneral.dspMain");			
 			}		
+		</cfscript>	
+	</cffunction>
+
+	<cffunction name="doSetup" access="public" returntype="void">
+		<cfscript>
+			try {
+				oContext = getService("sessionContext").getContext();
+				oConfig = getService("configManager").getAppHomePortalsConfigBean(oContext);
+				stLibTypes = oConfig.getResourceLibraryTypes();
+
+				oConfig.setResourceType(name = variables.RESOURCE_TYPE,
+										folderName = variables.RESOURCE_TYPE_FOLDER,
+										fileTypes = "opml");	
+		
+ 				getService("configManager").saveAppHomePortalsConfigBean(oContext, oConfig);
+ 				
+ 				reloadSite();
+ 			
+				setMessage("info","Outline resource setup");
+				setNextEvent("outlineEditor.ehGeneral.dspMain");
+
+			} catch(any e) {
+				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
+				setNextEvent("outlineEditor.ehGeneral.dspSetup");
+			}
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="doSetResource" access="public" returntype="void">
+		<cfscript>
+			var resID = getValue("resID");
+			var hp = getService("sessionContext").getContext().getHomePortals();
+			
+			try {
+				if(resID neq "") {
+					resLib = hp.getResourceLibraryManager().getResourceLibrary(listFirst(resID,"|"));
+					oResourceBean = resLib.getResource(variables.RESOURCE_TYPE, listGetAt(resID,2,"|"), listLast(resID,"|"));
+					session.outlineEditor_selRes = oResourceBean;
+					session.outlineEditor_selResID = resID;
+				} else {
+					structDelete(session,"outlineEditor_selRes");
+					structDelete(session,"outlineEditor_selResID");
+				}
+				setNextEvent("outlineEditor.ehGeneral.dspMain");
+
+			} catch(any e) {
+				setMessage("error",e.message);
+				getService("bugTracker").notifyService(e.message, e);
+				setNextEvent("outlineEditor.ehGeneral.dspMain");
+			}
 		</cfscript>	
 	</cffunction>
 
@@ -242,19 +350,22 @@
 
 	<cffunction name="saveDoc" access="private" returntype="void">
 		<cfargument name="xmlDoc" type="xml" required="true">
-		<cfset var path = getDocPath()>
 		<cfset var oFormatter = createObject("component","ColdBricks.components.xmlStringFormatter").init()>
-		<cfset fileWrite(expandPath(path), oFormatter.makePretty(arguments.xmlDoc.xmlRoot), "utf-8") >
+		<cfset var resBean = session.outlineEditor_selRes>
+		<cfset resBean.saveFile( resBean.getID() & ".opml", oFormatter.makePretty(arguments.xmlDoc.xmlRoot) )>
 	</cffunction>
 
 	<cffunction name="getDocPath" access="private" returntype="string">
 		<cfscript>
-			var oSiteInfo = getService("sessionContext").getContext().getSiteInfo();
-			var path = oSiteInfo.getPath();
-			if(right(path,1) neq "/") path = path & "/";
-			path  = path & variables.MAP_FILE;
+			var path = "";
+			
+			if(structKeyExists(session,"outlineEditor_selRes")) {
+				path = session.outlineEditor_selRes.getFullHREF();
+			}
+			
 			return path;
 		</cfscript>
 	</cffunction>
+
 
 </cfcomponent>

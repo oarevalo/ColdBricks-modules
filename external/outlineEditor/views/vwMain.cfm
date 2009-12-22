@@ -3,6 +3,7 @@
 <cfparam name="rs.path" default="">
 <cfparam name="rs.itemName" default="">
 <cfparam name="rs.itemURL" default="">
+<cfparam name="rs.selectedResourceID" default="">
 
 <cfoutput>
 	<script type="text/javascript">
@@ -11,7 +12,25 @@
 				document.location = "index.cfm?event=outlineEditor.ehGeneral.doDeleteItem&path="+path;
 			}
 		}
+		function setResource(resID) {
+			document.location = "index.cfm?event=outlineEditor.ehGeneral.doSetResource&resID="+resID;
+		}
 	</script>
+
+	<p>
+		Select Resource:
+		<select name="resourceID" onchange="setResource(this.value);" class="formField">
+			<option value=""></option>
+			<cfloop query="rs.qryResources">
+				<cfset tmpID = "#rs.qryResources.libpath#|#rs.qryResources.package#|#rs.qryResources.id#">
+				<option value="#tmpID#" <cfif tmpID eq rs.selectedResourceID>selected</cfif>>#rs.qryResources.libpath##rs.qryResources.package#/#rs.qryResources.id#</option>
+			</cfloop>
+		</select>
+	</p>
+
+	<cfif rs.selectedResourceID eq "">
+		<cfexit method="exittemplate">
+	</cfif>
 
 	<p style="font-size:13px;">
 		<b>Path:</b>
@@ -32,17 +51,35 @@
 					<form name="frm" method="post" action="index.cfm">
 						<input type="hidden" name="event" value="outlineEditor.ehGeneral.doSaveItem">
 						<input type="hidden" name="path" value="#rs.edit#">
+						<input type="hidden" name="attributes" value="#structKeyList(rs.nodeAttributes)#">
 						<table class="browseTable" style="border:1px solid silver;background-color:##ebebeb;" cellpadding="3" cellspacing="0">
 							<tr>
-								<td><b>Name:</b></td>
+								<td style="width:120px;"><b>Name:</b></td>
 								<td><input type="text" name="name" value="#rs.itemName#" class="formField"></td>
 							</tr>
 							<tr>
 								<td><b>URL:</b></td>
 								<td><input type="text" name="url" value="#rs.itemURL#" class="formField"></td>
 							</tr>
+							<cfloop collection="#rs.nodeAttributes#" item="attr">
+								<cfif not listFindNoCase("text,href",attr)>
+									<tr>
+										<td><b>#attr#:</b></td>
+										<td>
+											<input type="text" name="#attr#" value="#rs.nodeAttributes[attr]#" class="formField">
+											<cfif listLast(rs.edit) neq 0 and rs.edit neq "">
+												<input type="checkbox" name="#attr#_delete" value="true"> Delete?
+											</cfif>
+										</td>
+									</tr>
+								</cfif>
+							</cfloop>
 							<tr>
-								<td colspan="2">
+								<td><input type="text" name="newAttr_name" value="" class="formField" style="width:100px;"></td>
+								<td><input type="text" name="newAttr_value" value="" class="formField"></td>
+							</tr>
+							<tr>
+								<td colspan="2" style="padding-top:20px;">
 									<input type="submit" name="btnsave" value="Apply Changes">
 									&nbsp;&nbsp;
 									<a href="index.cfm?event=outlineEditor.ehGeneral.dspMain&path=#rs.path#">Cancel</a>
@@ -81,7 +118,7 @@
 							</td>
 							<td align="center">
 								<a href="index.cfm?event=outlineEditor.ehGeneral.dspMain&edit=#thisPath#&path=#rs.path#"><img src="images/page_edit.png" alt="Edit item" border="0" align="absmiddle"></a>
-								<a href="##" onclick="confirmDelete('#thisPath#','#jsStringFormat(node.xmlAttributes.title)#')"><img src="images/waste_small.gif" alt="Delete" border="0" align="absmiddle"></a>
+								<a href="##" onclick="confirmDelete('#thisPath#','#jsStringFormat(node.xmlAttributes.text)#')"><img src="images/waste_small.gif" alt="Delete" border="0" align="absmiddle"></a>
 								<cfif i gt 1>
 									<a href="index.cfm?event=outlineEditor.ehGeneral.doMoveUp&path=#thisPath#"><img src="images/arrow_up.png" alt="Move up" border="0" align="absmiddle"></a>
 								</cfif>
