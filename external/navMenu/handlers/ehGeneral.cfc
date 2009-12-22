@@ -10,7 +10,7 @@
 			var path = getValue("path");
 			var edit = getValue("edit");
 			var itemName = getValue("itemName");
-			var itemURL = getValue("itemName");
+			var itemURL = getValue("itemURL");
 
 			try {
 				xmlDoc = loadNavMap();
