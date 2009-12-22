@@ -159,9 +159,7 @@
 					setNextEvent("navMenu.ehGeneral.dspMain&path=#newpath#");
 				}
 				
-				nodeCopy = xmlElemNew(xmlDoc,"item");
-				nodeCopy.xmlAttributes["title"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.title;
-				nodeCopy.xmlAttributes["href"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.href;
+				nodeCopy = duplicate( xmlNode.xmlChildren[listLast(path)] );
 
 				arrayDeleteAt(xmlNode.xmlChildren,listLast(path));
 				arrayInsertAt(xmlNode.xmlChildren,listLast(path)-1,nodeCopy);
@@ -200,10 +198,8 @@
 					setNextEvent("navMenu.ehGeneral.dspMain&path=#newpath#");
 				}
 
-				nodeCopy = xmlElemNew(xmlDoc,"item");
-				nodeCopy.xmlAttributes["title"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.title;
-				nodeCopy.xmlAttributes["href"] = xmlNode.xmlChildren[listLast(path)].xmlAttributes.href;
-
+				nodeCopy = duplicate( xmlNode.xmlChildren[listLast(path)] );
+		
 				arrayDeleteAt(xmlNode.xmlChildren,listLast(path));
 				arrayInsertAt(xmlNode.xmlChildren,listLast(path)+1,nodeCopy);
 
