@@ -285,7 +285,7 @@
 
 				oConfig.setResourceType(name = variables.RESOURCE_TYPE,
 										folderName = variables.RESOURCE_TYPE_FOLDER,
-										fileTypes = "opml");	
+										fileTypes = "xml");	
 		
  				getService("configManager").saveAppHomePortalsConfigBean(oContext, oConfig);
  				
@@ -352,7 +352,7 @@
 		<cfargument name="xmlDoc" type="xml" required="true">
 		<cfset var oFormatter = createObject("component","ColdBricks.components.xmlStringFormatter").init()>
 		<cfset var resBean = session.outlineEditor_selRes>
-		<cfset resBean.saveFile( resBean.getID() & ".opml", oFormatter.makePretty(arguments.xmlDoc.xmlRoot) )>
+		<cfset resBean.saveFile( resBean.getID() & ".xml", oFormatter.makePretty(arguments.xmlDoc.xmlRoot) )>
 	</cffunction>
 
 	<cffunction name="getDocPath" access="private" returntype="string">
