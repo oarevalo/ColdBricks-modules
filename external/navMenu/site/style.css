@@ -2,12 +2,12 @@
 /*URL: http://www.dynamicdrive.com/style/ */
 
 .sidebarmenu ul{
-margin: -10;
+margin: -10px;
 margin-top: 0;
 padding: 0;
 list-style-type: none;
 font: 11px Verdana;
-width: 220px; /* Main Menu Item widths */
+width: 180px; /* Main Menu Item widths */
 border-bottom: 1px solid #ccc;
 }
  
@@ -42,7 +42,7 @@ background-color: white;
 /*Sub level menu items */
 .sidebarmenu ul li ul{
 position: absolute;
-width: 210px; /*Sub Menu Items width */
+width: 180px; /*Sub Menu Items width */
 top: 0;
 margin-left:2px;
 margin-top:1px;
