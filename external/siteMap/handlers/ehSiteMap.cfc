@@ -198,7 +198,7 @@
 						fileContent = fileContent & "<!--- FINISHED COLDBRICKS COMMENTS --->" & crlf;
 						fileContent = fileContent & "<cfset account=""#account#"">" & crlf;
 						fileContent = fileContent & "<cfset page=""#page#"">" & crlf;
-						fileContent = fileContent & "<cfinclude template=""/homePortalsAccounts/common/Templates/page.cfm"">";
+						fileContent = fileContent & "<cfinclude template=""/homePortals/plugins/accounts/page.cfm"">";
 						break;
 				
 					case "static":
