@@ -14,7 +14,7 @@
 				setValue("appRoot", hp.getConfig().getAppRoot() );
 				setValue("resourcesRoot", hp.getConfig().getResourceLibraryPath() );
 				setValue("cbPageTitle", "SiteMap Tool");
-				setValue("cbPageIcon", "Globe_48x48.png");
+				setValue("cbPageIcon", "images/Globe_48x48.png");
 				setValue("cbShowSiteMenu", true);
 	
 				setView("vwMain");
@@ -158,8 +158,8 @@
 			var account = getValue("account");
 			var page = getValue("page");
 			var update = getValue("update",false);
-			var type = getValue("type");
-			var crlf = chr(13);
+			var type = getValue("type","dynamic");
+			var crlf = chr(10) & chr(13);
 			var fileContent = "";
 			var fileName = "";
 			var oPageRenderer = 0;
@@ -188,6 +188,10 @@
 						throw("You are trying to create a file that already exists","coldBricks.validation");
 				}
 				
+				hp = oContext.getHomePortals();
+				pageHREF = hp.getPluginManager().getPlugin("accounts").getPageAlias(account, page);
+
+
 				switch(type) {
 					
 					case "dynamic":
@@ -196,20 +200,18 @@
 						fileContent = fileContent & "<!--- $CB_SM_ACCOUNT:[#account#] --->" & crlf;
 						fileContent = fileContent & "<!--- $CB_SM_PAGE:[#page#] --->" & crlf;
 						fileContent = fileContent & "<!--- FINISHED COLDBRICKS COMMENTS --->" & crlf;
-						fileContent = fileContent & "<cfset account=""#account#"">" & crlf;
-						fileContent = fileContent & "<cfset page=""#page#"">" & crlf;
-						fileContent = fileContent & "<cfinclude template=""/homePortals/plugins/accounts/page.cfm"">";
+						fileContent = fileContent & "<cfset page=""#pageHREF#"">" & crlf;
+						fileContent = fileContent & "<cfinclude template=""/homePortals/common/Templates/page.cfm"">";
 						break;
 				
 					case "static":
-						hp = oContext.getHomePortals();
 						
 						// put a refernce to the homeportals object in the application scope. 
 						// This is needed for the rendering
 						application.homePortals = hp;
 					
 						// load and parse page
-						oPageRenderer = hp.loadPage(account, page);
+						oPageRenderer = hp.loadPage(pageHREF);
 					
 						// render page html
 						fileContent = oPageRenderer.renderPage();						
