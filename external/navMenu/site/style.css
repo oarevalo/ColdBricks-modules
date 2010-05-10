@@ -44,8 +44,8 @@ background-color: white;
 position: absolute;
 width: 180px; /*Sub Menu Items width */
 top: 0;
-margin-left:2px;
-margin-top:1px;
+margin-left:0px;
+margin-top:-1px;
 visibility: hidden;
 border:1px solid #999;
 }
