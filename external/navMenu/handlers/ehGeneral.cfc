@@ -237,8 +237,13 @@
 	<cffunction name="saveNavMap" access="private" returntype="void">
 		<cfargument name="xmlDoc" type="xml" required="true">
 		<cfset var path = getNavMapPath()>
-		<cfset var oFormatter = createObject("component","ColdBricks.components.xmlStringFormatter").init()>
-		<cfset fileWrite(expandPath(path), oFormatter.makePretty(arguments.xmlDoc.xmlRoot), "utf-8") >
+		<cflock name="navMenu_savefile_lock" type="exclusive" timeout="10">
+			<!---
+			<cfset var oFormatter = createObject("component","ColdBricks.components.xmlStringFormatter").init()>
+			<cfset fileWrite(expandPath(path), oFormatter.makePretty(arguments.xmlDoc.xmlRoot), "utf-8") >
+			--->
+			<cfset fileWrite(expandPath(path), toString(arguments.xmlDoc), "utf-8") >
+		</cflock>
 	</cffunction>
 
 	<cffunction name="getNavMapPath" access="private" returntype="string">

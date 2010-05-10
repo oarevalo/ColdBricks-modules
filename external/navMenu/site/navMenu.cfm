@@ -35,13 +35,13 @@
 	<cfset var oCacheRegistry = createObject("component","homePortals.components.cacheRegistry").init()>
 	<cfset var oCacheService = 0>
 
-	<cflock type="exclusive" name="navmenu_lock" timeout="30">
-		<cfif not oCacheRegistry.isRegistered(cacheName)>
-			<!--- crate cache instance and add to registry --->
+	<cfif not oCacheRegistry.isRegistered(cacheName)>
+		<!--- crate cache instance and add to registry --->
+		<cflock type="exclusive" name="navmenu_lock" timeout="30">
 			<cfset oCacheService = createObject("component","homePortals.components.cacheService").init(1, 0)>
 			<cfset oCacheRegistry.register(cacheName, oCacheService)>
-		</cfif>
-	</cflock>
+		</cflock>
+	</cfif>
 </cffunction>
 
 <cffunction name="getFromCache" access="private">
@@ -49,17 +49,26 @@
 	<cfset var filePath = getHomePortals().getConfig().getAppRoot() & "/" & MAP_FILE>
 	<cfset var cache = createObject("component","homePortals.components.cacheRegistry").getCache("navMenuCache")>
 	<cfset var xmlDoc = 0>
+	<cfset var str = "">
 
 	<cftry>
 		<cfset xmlDoc = cache.retrieve("data")>
 		<cfcatch type="homePortals.cacheService.itemNotFound">
-			<cfif fileExists(expandPath(filePath))>
-				<cfset xmlDoc = xmlParse(expandPath(filePath))>
-			<cfelse>
-				<cfset xmlDoc = xmlNew()>
-				<cfset xmlDoc.xmlRoot = xmlElemNew(xmlDoc,"site")>
-			</cfif>
-			<cfset cache.store("data",xmlDoc)>
+			<cflock type="exclusive" name="navmenu_lock" timeout="30">
+				<cfif fileExists(expandPath(filePath))>
+					<cfset str = fileRead(expandPath(filePath)) />
+					<cfif isXML(str)>
+						<cfset xmlDoc = xmlParse(expandPath(filePath))>
+						<cfset cache.store("data",xmlDoc)>
+					<cfelse>
+						<cfset str = "<site><item href=""/"" title=""Home"" /></site>">
+						<cfset xmlDoc = xmlParse(str) />
+					</cfif>
+				<cfelse>
+					<cfset xmlDoc = xmlNew()>
+					<cfset xmlDoc.xmlRoot = xmlElemNew(xmlDoc,"site")>
+				</cfif>
+			</cflock>
 		</cfcatch>
 	</cftry>
 	
