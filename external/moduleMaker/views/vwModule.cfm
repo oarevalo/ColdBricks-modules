@@ -46,10 +46,10 @@
 
 				<b>View:</b>
 				&nbsp;&nbsp;&nbsp;
-				<input type="radio" name="viewpanel" value="config" checked="true" onclick="selectPanel('config')"> Config
+				<input type="radio" name="viewpanel" value="config" checked="true" onclick="selectPanel('config')" id="chkConfig"> <label for="chkConfig">Config</label>
 				<cfif isCustom>
-					<input type="radio" name="viewpanel" value="body" onclick="selectPanel('body')"> Body
-					<input type="radio" name="viewpanel" value="head" onclick="selectPanel('head')"> Head
+					<input type="radio" name="viewpanel" value="body" onclick="selectPanel('body')" id="chkBody"> <label for="chkBody">Body</label>
+					<input type="radio" name="viewpanel" value="head" onclick="selectPanel('head')" id="chkHead"> <label for="chkHead">Head</label>
 				<cfelse>
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					<span style="color:red;font-weight:bold;">This is not a custom module. Only custom modules can be edited using the Module Maker</span>

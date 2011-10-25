@@ -1,6 +1,7 @@
 <cfcomponent extends="ColdBricks.handlers.ehColdBricks">
 	
 	<cfset pathSeparator =  createObject("java","java.lang.System").getProperty("file.separator")>
+	<cfset baseCustomRendererPath = "homePortals.renderers.custom">
 
 	<cffunction name="dspMain" access="public" returntype="void">
 		<cfscript>
@@ -23,7 +24,7 @@
 	<cffunction name="dspModule" access="public" returntype="void">
 		<cfscript>
 			var moduleType = getValue("moduleType");
-			var isCustom = false;
+			var isCustom = true;
 			var aFields = arrayNew(1);
 			
 			try {
@@ -33,9 +34,30 @@
 				oConfig = getService("configManager").getAppHomePortalsConfigBean(oContext);
 
 				path = oConfig.getContentRenderer(moduleType);
-				oCR = createObject("component",path);
-				md = duplicate(getMetaData(oCR));
-				isCustom = isCustomContentRenderer(oCR);
+				
+				// first try to validate that the CFC is in fact a custom module before actually instantiating it
+				try {
+					md = GetComponentMetaData(path);
+					if(md.extends.name neq baseCustomRendererPath) {
+						// this is not a custom component, so we will not load it
+						setMessage("warning","This is not custom renderer that can be used with the ModuleMaker");
+						setView("vwDefault");
+						return;
+					}
+				} catch(any e) {
+					// there's something wrong with the CFC, can't get any metadata out of it			
+					setMessage("error",e.message);
+					setView("vwDefault");
+					return;
+				}
+				
+				try {
+					oCR = createObject("component",path);
+				} catch(any e) {
+					setMessage("error",e.message);
+					setView("vwDefault");
+					return;
+				}
 					
 				aFields = [
 							{name = "Module ID", token = "$MODULE_ID$"},
@@ -76,18 +98,18 @@
 				setValue("isCustom",isCustom);
 				setValue("aFields",aFields);
 				setValue("tagInfo",md);
-				if(isCustom) {
-					setValue("head",oCR.getHead());
-					setValue("body",oCR.getBody());
-				}
+				setValue("head",oCR.getHead());
+				setValue("body",oCR.getBody());
 
 				setView("vwModule");
 							
 			} catch(coldbricks.validation e) {
 				setMessage("warning",e.message);
+				setView("vwDefault");
 
 			} catch(any e) {
 				setMessage("error",e.message);
+				setView("vwDefault");
 				getService("bugTracker").notifyService(e.message, e);
 			}				
 		</cfscript>
@@ -394,7 +416,7 @@
 		<cfargument name="path" type="string" required="true">
 		<cfargument name="description" type="string" required="true">
 		<cfset var tmppath = expandPath(arguments.path & "/" & arguments.name & ".cfc")>
-		<cfset var txt = "<cfcomponent extends=""homePortals.components.contentTagRenderers.custom"" hint=""#xmlFormat(arguments.description)#""></cfcomponent>">
+		<cfset var txt = "<cfcomponent extends=""#baseCustomRendererPath#"" hint=""#xmlFormat(arguments.description)#""></cfcomponent>">
 		<cfif not directoryExists(expandPath(arguments.path))>
 			<cfdirectory action="create" directory="#expandPath(arguments.path)#">
 		</cfif>
@@ -420,7 +442,7 @@
 		<cfset var tmpBodyPath = arguments.path & arguments.name & "_body.inc">
 		<cfset var tmpHeadPath = arguments.path & arguments.name & "_head.inc">
 
-		<cfset txt = "<cfcomponent extends=""homePortals.components.contentTagRenderers.custom"" hint=""#xmlFormat(arguments.description)#"">" & crlf>
+		<cfset txt = "<cfcomponent extends=""#baseCustomRendererPath#"" hint=""#xmlFormat(arguments.description)#"">" & crlf>
 		<cfloop from="1" to="#arrayLen(arguments.properties)#" index="i">
 			<cfset thisProp = arguments.properties[i]>
 			<cfparam name="thisProp.name" default="">
@@ -477,22 +499,5 @@
 		
 		<cfset reloadSite()>
 	</cffunction>	
-			
-	<cffunction name="isCustomContentRenderer" access="public" returntype="boolean">
-		<cfargument name="obj" type="any" required="true">
-		<cftry>
-			<cfset __dummy_check_type__(arguments.obj)>
-			<cfreturn true>
-			<cfcatch type="any">
-				<cfreturn false>
-			</cfcatch>
-		</cftry>
-	</cffunction>	
-	
-	<cffunction name="__dummy_check_type__" access="private" returntype="void">
-		<cfargument name="obj" type="homePortals.components.contentTagRenderers.custom" required="true">
-		<!--- nothing ---->
-		<cfreturn>
-	</cffunction>
-		
+				
 </cfcomponent>

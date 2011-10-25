@@ -1,6 +1,6 @@
 <cfset getService("UIManager").registerModule(name = "moduleMaker",
 												description = "Create your own custom modules to add to your pages",
-												version = "1.0",
+												version = "1.1",
 												author = "ColdBricks",
 												authorURL = "http://www.coldbricks.com")>
 												
