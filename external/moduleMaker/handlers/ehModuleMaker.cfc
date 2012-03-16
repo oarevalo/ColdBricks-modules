@@ -193,10 +193,10 @@
 				oContext = getService("sessionContext").getContext();
 				oConfig = getService("configManager").getAppHomePortalsConfigBean(oContext);
 
-				if(name eq "") throw("Module name cannot be blank","coldbricks.validation");
-				if(path eq "") throw("Module path cannot be blank","coldbricks.validation");
+				if(name eq "") throwException("Module name cannot be blank","coldbricks.validation");
+				if(path eq "") throwException("Module path cannot be blank","coldbricks.validation");
 				if(reFind("[^A-Za-z0-9_]",name)) 
-					throw("Module names can only contain characters from the alphabet, digits and the underscore symbol","coldbricks.validation");
+					throwException("Module names can only contain characters from the alphabet, digits and the underscore symbol","coldbricks.validation");
 
 				// create module cfc
 				createModule(name,path,description);
@@ -268,7 +268,7 @@
 				oContext = getService("sessionContext").getContext();
 				oConfig = getService("configManager").getAppHomePortalsConfigBean(oContext);
 	
-				if(moduleType eq "") throw("Module name cannot be blank","coldbricks.validation");
+				if(moduleType eq "") throwException("Module name cannot be blank","coldbricks.validation");
 
 				path = oConfig.getContentRenderer(moduleType);
 				oCR = createObject("component",path);
@@ -307,8 +307,8 @@
 				oContext = getService("sessionContext").getContext();
 				oConfig = getService("configManager").getAppHomePortalsConfigBean(oContext);
 
-				if(name eq "") throw("The module property name is required","coldbricks.validation");
-				if(type eq "") throw("The module property type is required","coldbricks.validation");
+				if(name eq "") throwException("The module property name is required","coldbricks.validation");
+				if(type eq "") throwException("The module property type is required","coldbricks.validation");
 				if(type eq "resource") type = "resource:" & getValue("resourceType");
 
 				path = oConfig.getContentRenderer(moduleType);

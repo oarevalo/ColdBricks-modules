@@ -53,8 +53,8 @@
 				oConfig = getService("configManager").getAppHomePortalsConfigBean(oContext);
 				stLibTypes = oConfig.getResourceLibraryTypes();
 
-				if(getValue("key") eq "") throw("S3 Access key cannot be empty","coldbricks.validation");
-				if(getValue("secret") eq "") throw("S3 Secret key cannot be empty","coldbricks.validation");
+				if(getValue("key") eq "") throwException("S3 Access key cannot be empty","coldbricks.validation");
+				if(getValue("secret") eq "") throwException("S3 Secret key cannot be empty","coldbricks.validation");
  			
  				oConfig.setResourceLibraryType(variables.S3Prefix, variables.S3Path);
  				oConfig.setResourceLibraryTypeProperty(variables.S3Prefix, "key", getValue("key"));
@@ -89,7 +89,7 @@
 			try {
 				oContext = getService("sessionContext").getContext();
 				
-				if(path eq "") throw("The resource library path is required","validation");
+				if(path eq "") throwException("The resource library path is required","validation");
 
 				oConfigBean = getService("configManager").getAppHomePortalsConfigBean(oContext);
 				
@@ -130,7 +130,7 @@
 			try {
 				oContext = getService("sessionContext").getContext();
 				
-				if(val(index) eq 0) throw("You must select a resource library to delete","validation");
+				if(val(index) eq 0) throwException("You must select a resource library to delete","validation");
 
 				oConfigBean = getService("configManager").getAppHomePortalsConfigBean(oContext);
 				

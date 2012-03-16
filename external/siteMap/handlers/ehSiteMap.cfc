@@ -131,10 +131,10 @@
 			var name = getValue("name");
 			
 			try {
-				if(name eq "") throw("Directory name cannot be empty","coldBricks.validation");
+				if(name eq "") throwException("Directory name cannot be empty","coldBricks.validation");
 				
 				if(directoryExists(expandPath(path & "/" & name)))
-					throw("You are trying to create a directory that already exists","coldBricks.validation");
+					throwException("You are trying to create a directory that already exists","coldBricks.validation");
 			
 				createDir(expandPath(path & "/" & name));
 				
@@ -167,13 +167,13 @@
 			var oContext = getService("sessionContext").getContext();
 
 			try {
-				if(account eq "") throw("Account name cannot be empty","coldBricks.validation");
+				if(account eq "") throwException("Account name cannot be empty","coldBricks.validation");
 				
 				if(update) {
 					fileName = path;
 					
 				} else {
-					if(name eq "") throw("File name cannot be empty");
+					if(name eq "") throwException("File name cannot be empty");
 
 					fileName = path & "/" & name;
 					
@@ -185,7 +185,7 @@
 					}
 				
 					if(fileExists(expandPath(fileName)))
-						throw("You are trying to create a file that already exists","coldBricks.validation");
+						throwException("You are trying to create a file that already exists","coldBricks.validation");
 				}
 				
 				hp = oContext.getHomePortals();
@@ -222,7 +222,7 @@
 						break;
 						
 					default:
-						throw("Invalid page type","coldBricks.validation");
+						throwException("Invalid page type","coldBricks.validation");
 				}
 			
 				writeFile(expandPath(fileName), fileContent);
@@ -249,14 +249,14 @@
 				
 				if(not isFile) {
 					if(not directoryExists(expandPath(path)))
-						throw("You are trying to delete a directory that does not exist","coldBricks.validation");
+						throwException("You are trying to delete a directory that does not exist","coldBricks.validation");
 				
 					deleteDir(expandPath(path));
 					setMessage("info", "Directory deleted");
 
 				} else {
 					if(not fileExists(expandPath(path)))
-						throw("You are trying to delete a directory that does not exist","coldBricks.validation");
+						throwException("You are trying to delete a directory that does not exist","coldBricks.validation");
 				
 					deleteFile(expandPath(path));
 					setMessage("info", "File deleted");
